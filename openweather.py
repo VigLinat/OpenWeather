@@ -1,26 +1,23 @@
 import requests
-import json
+import openweathermapapi as api
 
-def get_current_weather(city, APIkey):
-    current_weather_path = 'https://api.openweathermap.org/data/2.5/weather'
-    APIparams = {'q' : city, 'APPID' : APIkey}
-    request_handler = requests.get(current_weather_path, params = APIparams)
-
-    return request_handler
-                                   
+from datetime import datetime
+#conversion from unix timestamp to readable date-time:
+#print(datetime.utcfromtimestamp(dt).strftime('%Y-%m-%d %H:%M:%S'))
 
 APIkey = 'ee3c9674a0567d97347a5b1a34e8171f'
 city = 'Sevastopol'
 
-if (__name__ == '__main__'):
-    
-    r = get_current_weather(city, APIkey) 
+weather = ['weather', 'main', 'wind', 'clouds']
 
-    try:
-        data = r.json()
-        print(data)
-        print('\n')
-    except ValueError as e:
-        print(e)
+r = api.get_current_weather(city, APIkey)
 
-    
+with open('log.txt', 'w') as log:
+    log.write(r.text)
+
+data = r.json()
+
+print('current GMT+3 time : ', datetime.utcfromtimestamp(data['dt']).strftime('%Y-%m-%d %H:%M:%S'))
+for param in weather:
+     if param in data:
+         print(param, ' : ', data[param])
