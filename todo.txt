@@ -1,0 +1,2 @@
+1. implement weather class
+1.1 hold dif api responses
